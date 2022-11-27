@@ -1,5 +1,20 @@
 # Pythonで学ぶ強化学習 -入門から実践まで-
 
+- Pythonで学ぶ機械学習勉強用のリポジトリ。
+- pythonはpipenvを利用して実行中
+- mac上でmetalのアクセラレーションを利用できるようにしてあります。
+
+## setup
+```shell
+git clone https://github.com/ryoma310/baby-steps-of-rl-ja.git
+cd baby-steps-of-rl-ja
+pipenv install
+```
+- 以降、`pipenv shell`して実行 or `pipenv run python /path/to/script`にて実行。
+
+---
+以下、originalのREADME
+
 [Pythonで学ぶ強化学習 -入門から実践まで-](https://www.amazon.co.jp/dp/4065142989/)の実装コードリポジトリです。
 
 誤記、またサンプルコードの実行エラーについてはIssueで管理しています。
