@@ -8,7 +8,8 @@
 ```shell
 git clone https://github.com/ryoma310/baby-steps-of-rl-ja.git
 cd baby-steps-of-rl-ja
-pipenv install
+# pipenv install 今はlockが失敗してしまっているので、下のコマンドで代替。そのうち解決します。
+pipenv install --skip-lock
 ```
 - 以降、`pipenv shell`して実行 or `pipenv run python /path/to/script`にて実行。
 
