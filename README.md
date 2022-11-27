@@ -4,6 +4,24 @@
 - pythonはpipenvを利用して実行中
 - mac上でmetalのアクセラレーションを利用できるようにしてあります。
 
+## system info
+```
+Software:
+  System Version: macOS 13.0 (22A380)
+  Kernel Version: Darwin 22.1.0
+
+Hardware:
+  Chip: Apple M2
+  Total Number of Cores: 8 (4 performance and 4 efficiency)
+  Memory: 16 GB
+
+Graphics/Displays:
+  Chipset Model: Apple M2
+  Type: GPU
+  Total Number of Cores: 10
+  Metal Support: Metal 3
+```
+
 ## setup
 ```shell
 git clone https://github.com/ryoma310/baby-steps-of-rl-ja.git
