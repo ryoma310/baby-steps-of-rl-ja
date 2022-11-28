@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+pandas = "*"
+scipy = "*"
+scikit-learn = "*"
+matplotlib = "*"
+h5py = "*"
+tqdm = "*"
+jupyter = "*"
+pygame = "*"
+ple = {git = "https://github.com/ntasfi/PyGame-Learning-Environment.git"}
+tensorflow = "*"
+gym-ple = {git = "https://github.com/lusob/gym-ple"}
+tornado = "*"
+gym = {git = "https://github.com/ryoma310/gym-v0.14.0"}
+certifi = "*"
+pyopengl = "*"
+pyglet = "==1.5.27"
+packaging = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
