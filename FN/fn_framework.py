@@ -5,9 +5,11 @@ from collections import namedtuple
 from collections import deque
 import numpy as np
 import tensorflow as tf
-from tensorflow.python import keras as K
+import keras as K
 from PIL import Image
 import matplotlib.pyplot as plt
+
+from socket import socket, AF_INET, SOCK_DGRAM
 
 
 Experience = namedtuple("Experience",
@@ -101,12 +103,18 @@ class Trainer():
         self.reward_log = []
         frames = []
 
+        ADDRESS = "127.0.0.1"
+        PORT = 5000
+        t = socket(AF_INET, SOCK_DGRAM)
+        t.sendto(f"{episode=}\n".encode(), (ADDRESS, PORT))
+
         for i in range(episode):
             s = env.reset()
             done = False
             step_count = 0
             self.episode_begin(i, agent)
             while not done:
+                t.sendto(f"i/episode: {i}/{episode}, {step_count=}\n".encode(), (ADDRESS, PORT))
                 if render:
                     env.render()
                 if self.training and observe_interval > 0 and\
@@ -137,10 +145,11 @@ class Trainer():
 
                 if self.training:
                     if len(frames) > 0:
-                        self.logger.write_image(self.training_count,
-                                                frames)
+                        with self.logger.writer.as_default():
+                            tf.summary.image("image", frames, step=self.training_count)
                         frames = []
                     self.training_count += 1
+        t.close()
 
     def episode_begin(self, episode, agent):
         pass
@@ -203,15 +212,21 @@ class Logger():
             if not os.path.exists(self.log_dir):
                 os.mkdir(self.log_dir)
 
-        self._callback = tf.compat.v1.keras.callbacks.TensorBoard(
+        print(K.__file__)
+        self._callback = tf.keras.callbacks.TensorBoard(
                             self.log_dir)
+        
 
     @property
     def writer(self):
-        return self._callback.writer
+        # return self._callback.writer
+        return self._callback._writers["writer"]
 
     def set_model(self, model):
         self._callback.set_model(model)
+        self._callback._writers["writer"] = tf.summary.create_file_writer(
+                self._callback.log_dir
+            ) ## prepair writer
 
     def path_of(self, file_name):
         return os.path.join(self.log_dir, file_name)

@@ -3,7 +3,7 @@ from collections import deque
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
-from tensorflow.python import keras as K
+import keras as K
 from PIL import Image
 import gym
 import gym_ple

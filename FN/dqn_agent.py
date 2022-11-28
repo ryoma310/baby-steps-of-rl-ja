@@ -2,11 +2,13 @@ import random
 import argparse
 from collections import deque
 import numpy as np
-from tensorflow.python import keras as K
+import keras as K
 from PIL import Image
 import gym
 import gym_ple
 from fn_framework import FNAgent, Trainer, Observer
+
+import tensorflow as tf
 
 
 class DeepQNetworkAgent(FNAgent):
@@ -151,6 +153,7 @@ class DeepQNetworkTrainer(Trainer):
         self.logger.set_model(agent.model)
         agent.epsilon = self.initial_epsilon
         self.training_episode -= episode
+        print("begin train")
 
     def step(self, episode, step_count, agent, experience):
         if self.training:
@@ -162,9 +165,10 @@ class DeepQNetworkTrainer(Trainer):
         self.loss = self.loss / step_count
         self.reward_log.append(reward)
         if self.training:
-            self.logger.write(self.training_count, "loss", self.loss)
-            self.logger.write(self.training_count, "reward", reward)
-            self.logger.write(self.training_count, "epsilon", agent.epsilon)
+            with self.logger.writer.as_default():
+                tf.summary.scalar("loss", self.loss, step=self.training_count)
+                tf.summary.scalar("reward", reward, step=self.training_count)
+                tf.summary.scalar("epsilon", agent.epsilon, step=self.training_count)
             if reward > self._max_reward:
                 agent.save(self.logger.path_of(self.file_name))
                 self._max_reward = reward
