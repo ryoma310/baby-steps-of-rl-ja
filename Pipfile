@@ -17,11 +17,12 @@ ple = {git = "https://github.com/ntasfi/PyGame-Learning-Environment.git"}
 tensorflow-macos = "*"
 gym-ple = {git = "https://github.com/lusob/gym-ple"}
 tornado = "*"
-gym = "==0.14.0"
+gym = {git = "https://github.com/ryoma310/gym-v0.14.0"}
 tensorflow-metal = "*"
-pyglet = "==1.5.27"
 certifi = "*"
 pyopengl = "*"
+pyglet = "==1.5.27"
+packaging = "*"
 
 [dev-packages]
 
