@@ -23,6 +23,7 @@ certifi = "*"
 pyopengl = "*"
 pyglet = "==1.5.27"
 packaging = "*"
+keras-rl2 = {git = "https://github.com/ryoma310/keras-rl2-macos"}
 
 [dev-packages]
 
