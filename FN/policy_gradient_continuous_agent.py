@@ -9,6 +9,8 @@ import keras as K
 import gym
 from fn_framework import FNAgent, Trainer, Observer
 
+tf.compat.v1.disable_eager_execution()
+
 
 class PolicyGradientContinuousAgent(FNAgent):
 
@@ -78,7 +80,7 @@ class PolicyGradientContinuousAgent(FNAgent):
 
         # Actor loss
         mu = self.dist_model.output
-        action_dist = tf.distributions.Normal(loc=tf.squeeze(mu),
+        action_dist = tf.compat.v1.distributions.Normal(loc=tf.squeeze(mu),
                                               scale=0.1)
         action_probs = action_dist.prob(tf.squeeze(actions))
         clipped = tf.clip_by_value(action_probs, 1e-10, 1.0)
@@ -141,7 +143,7 @@ class SampleLayer(K.layers.Layer):
 
     def call(self, x):
         mu = x
-        actions = tf.distributions.Normal(loc=tf.squeeze(mu),
+        actions = tf.compat.v1.distributions.Normal(loc=tf.squeeze(mu),
                                           scale=0.1).sample([1])
         actions = tf.clip_by_value(actions, self.low, self.high)
         return tf.reshape(actions, (-1, 1))
@@ -212,7 +214,7 @@ def main(play):
     else:
         trained = trainer.train(env, episode_count=1500, render=True)
         trainer.logger.plot("Rewards", trainer.reward_log,
-                            trainer.report_interval)
+                            trainer.report_interval, save_path=f"{os.path.dirname(os.path.abspath(__file__))}/fig/{os.path.basename(__file__)}.png")
         trained.save(path)
 
 
