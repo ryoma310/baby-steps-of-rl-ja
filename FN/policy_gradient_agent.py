@@ -10,6 +10,7 @@ import gym
 from fn_framework import FNAgent, Trainer, Observer, Experience
 tf.compat.v1.disable_eager_execution()
 
+import matplotlib.pyplot as plt
 
 class PolicyGradientAgent(FNAgent):
 
@@ -151,9 +152,9 @@ def main(play):
         agent = PolicyGradientAgent.load(env, path)
         agent.play(env)
     else:
-        trained = trainer.train(env)
+        trained = trainer.train(env, render=False)
         trainer.logger.plot("Rewards", trainer.reward_log,
-                            trainer.report_interval)
+                            trainer.report_interval, save_path=f"{os.path.dirname(os.path.abspath(__file__))}/fig/{os.path.basename(__file__)}.png")
         trained.save(path)
 
 
