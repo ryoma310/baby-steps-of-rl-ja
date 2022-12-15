@@ -49,14 +49,14 @@ class DeepQNetworkAgent(FNAgent):
         self._teacher_model = K.models.clone_model(self.model)
 
     def estimate(self, state):
-        return self.model.predict(np.array([state]))[0]
+        return self.model.predict(np.array([state]), verbose=0)[0]
 
     def update(self, experiences, gamma):
         states = np.array([e.s for e in experiences])
         n_states = np.array([e.n_s for e in experiences])
 
-        estimateds = self.model.predict(states)
-        future = self._teacher_model.predict(n_states)
+        estimateds = self.model.predict(states, verbose=0)
+        future = self._teacher_model.predict(n_states, verbose=0)
 
         for i, e in enumerate(experiences):
             reward = e.r
@@ -184,7 +184,7 @@ class DeepQNetworkTrainer(Trainer):
             self.logger.describe("reward", recent_rewards, episode=episode)
 
 
-def main(play, is_test):
+def main(play, is_test, model_path):
     file_name = "dqn_agent.h5" if not is_test else "dqn_agent_test.h5"
     trainer = DeepQNetworkTrainer(file_name=file_name)
     path = trainer.logger.path_of(trainer.file_name)
@@ -200,6 +200,8 @@ def main(play, is_test):
         trainer.learning_rate = 1e-4
 
     if play:
+        if model_path:
+            path = model_path
         agent = agent_class.load(obs, path)
         agent.play(obs, render=True)
     else:
@@ -212,6 +214,8 @@ if __name__ == "__main__":
                         help="play with trained model")
     parser.add_argument("--test", action="store_true",
                         help="train by test mode")
+    parser.add_argument("--model_path", type=str,
+                        help="pretrained model path used for play")
 
     args = parser.parse_args()
-    main(args.play, args.test)
+    main(args.play, args.test, args.model_path)
