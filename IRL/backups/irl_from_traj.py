@@ -2,18 +2,18 @@ import os
 import argparse
 import numpy as np
 from collections import defaultdict
-from sklearn.externals import joblib
+import joblib
 from sklearn.neural_network import MLPRegressor
 import tensorflow as tf
-import tensorflow.contrib.eager as tfe
-from tensorflow.python import keras as K
+# import tensorflow.contrib.eager as tfe
+import keras as K
 import gym
 from gym.envs.registration import register
 register(id="FrozenLakeEasy-v0", entry_point="gym.envs.toy_text:FrozenLakeEnv",
          kwargs={"is_slippery": False})
 
 
-tfe.enable_eager_execution()
+# tfe.enable_eager_execution()
 
 
 class TeacherAgent():
@@ -96,7 +96,7 @@ class IRL():
     def __init__(self, env):
         self.actions = list(range(env.action_space.n))
         self.num_states = env.observation_space.n
-        self.rewards = tfe.Variable(tf.random_uniform(
+        self.rewards = tf.Variable(tf.random.uniform(
                                         [env.observation_space.n]),
                                     name="rewards")
         """
@@ -106,7 +106,7 @@ class IRL():
                                                    0.0, 0.0, 0.0, 1.0,],
                                     name="rewards")
         """
-        self._updater = tfe.implicit_gradients(self.loss)
+        # self._updater = tf.gradients(self.loss)
 
     """
     def value_estimate(self, steps, gamma):
@@ -182,7 +182,9 @@ class IRL():
 
     def update(self, optimizer, teacher_steps, steps, gamma):
         loss = self.loss(teacher_steps, steps, gamma)
-        optimizer.apply_gradients(self._updater(teacher_steps, steps, gamma))
+        # optimizer.apply_gradients(self._updater(teacher_steps, steps, gamma))
+        # optimizer.apply_gradients([(loss, self.rewards)])
+        optimizer.apply_gradients([loss, self.rewards])
         return loss, self.get_rewards()
 
     def take_action(self, Q, state, actions, epsilon=0.1):
@@ -216,7 +218,7 @@ class IRL():
         actions = list(range(env.action_space.n))
         rewards = np.zeros((env.observation_space.n))
         Q = defaultdict(lambda: [0] * len(actions))
-        optimizer = tf.train.AdamOptimizer(learning_rate)
+        optimizer = tf.keras.optimizers.Adam(learning_rate)
 
         for e in range(episode_count):
             batch = []

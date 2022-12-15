@@ -1,11 +1,12 @@
 import os
 import numpy as np
-from tensorflow.python import keras as K
+import keras as K
 import tensorflow as tf
 from environment import Environment
 from planner import PolicyIterationPlanner
 import visualizer as viz
 
+tf.compat.v1.disable_eager_execution()
 
 class LinerIRL():
 
@@ -24,7 +25,7 @@ class LinerIRL():
                                                    num_actions - 1,
                                                    num_states))
         gamma = tf.compat.v1.placeholder(tf.float32, shape=())
-        rewards = tf.Variable(tf.random_normal([num_states], mean=r_max/2),
+        rewards = tf.Variable(tf.random.normal([num_states], mean=r_max/2),
                               name="rewards")
 
         _indices = tf.constant([0] * num_states)
@@ -38,7 +39,7 @@ class LinerIRL():
             other_trans_prob = other_trans_probss[s][i]
 
             f_left = tf.reshape((best_trans_prob - other_trans_prob), (1, -1))
-            f_right = tf.matrix_inverse(eye - gamma * best_trans_prob)
+            f_right = tf.linalg.inv(eye - gamma * best_trans_prob)
 
             # Limit the rewards of other actions smaller than best's one.
             R = tf.reshape(tf.clip_by_value(rewards, -r_max, r_max), (-1, 1))
