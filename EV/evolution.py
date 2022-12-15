@@ -1,7 +1,7 @@
 import os
 import argparse
 import numpy as np
-from sklearn.externals.joblib import Parallel, delayed
+from joblib import Parallel, delayed
 from PIL import Image
 import matplotlib.pyplot as plt
 import gym
@@ -13,7 +13,7 @@ else:
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
-from tensorflow.python import keras as K
+import keras as K
 
 
 class EvolutionalAgent():
@@ -46,7 +46,7 @@ class EvolutionalAgent():
             self.model.set_weights(weights)
 
     def policy(self, state):
-        action_probs = self.model.predict(np.array([state]))[0]
+        action_probs = self.model.predict(np.array([state]), verbose=0)[0]
         action = np.random.choice(self.actions,
                                   size=1, p=action_probs)[0]
         return action
@@ -207,11 +207,13 @@ class EvolutionalTrainer():
         plt.show()
 
 
-def main(play):
+def main(play, arg_model_path_):
     model_path = os.path.join(os.path.dirname(__file__), "ev_agent.h5")
 
     if play:
         env = EvolutionalTrainer.make_env()
+        if arg_model_path_:
+            model_path = arg_model_path_
         agent = EvolutionalAgent.load(env, model_path)
         agent.play(env, episode_count=5, render=True)
     else:
@@ -225,6 +227,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Evolutional Agent")
     parser.add_argument("--play", action="store_true",
                         help="play with trained model")
+    parser.add_argument("--model_path", type=str,
+                        help="pretrained model path used for play")
 
     args = parser.parse_args()
-    main(args.play)
+    main(args.play, args.model_path)
