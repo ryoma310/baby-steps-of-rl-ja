@@ -8,6 +8,8 @@ import joblib
 import gym
 from fn_framework import FNAgent, Trainer, Observer
 
+import os
+
 
 class ValueFunctionAgent(FNAgent):
 
@@ -109,7 +111,7 @@ def main(play):
     else:
         trained = trainer.train(env)
         trainer.logger.plot("Rewards", trainer.reward_log,
-                            trainer.report_interval)
+                            trainer.report_interval, save_path=f"{os.path.dirname(os.path.abspath(__file__))}/fig/{os.path.basename(__file__)}.png")
         trained.save(path)
 
 
