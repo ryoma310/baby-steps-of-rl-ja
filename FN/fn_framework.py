@@ -9,7 +9,7 @@ import keras as K
 from PIL import Image
 import matplotlib.pyplot as plt
 
-from socket import socket, AF_INET, SOCK_DGRAM
+from tqdm import tqdm
 
 
 Experience = namedtuple("Experience",
@@ -103,18 +103,12 @@ class Trainer():
         self.reward_log = []
         frames = []
 
-        ADDRESS = "127.0.0.1"
-        PORT = 5000
-        t = socket(AF_INET, SOCK_DGRAM)
-        t.sendto(f"{episode=}\n".encode(), (ADDRESS, PORT))
-
-        for i in range(episode):
+        for i in tqdm(range(episode), total=episode):
             s = env.reset()
             done = False
             step_count = 0
             self.episode_begin(i, agent)
             while not done:
-                t.sendto(f"i/episode: {i}/{episode}, {step_count=}\n".encode(), (ADDRESS, PORT))
                 if render:
                     env.render()
                 if self.training and observe_interval > 0 and\
@@ -149,7 +143,6 @@ class Trainer():
                             tf.summary.image("image", frames, step=self.training_count)
                         frames = []
                     self.training_count += 1
-        t.close()
 
     def episode_begin(self, episode, agent):
         pass
@@ -240,7 +233,7 @@ class Logger():
         elif step > 0:
             print("At step {}, {}".format(step, desc))
 
-    def plot(self, name, values, interval=10):
+    def plot(self, name, values, interval=10, save_path=None):
         indices = list(range(0, len(values), interval))
         means = []
         stds = []
@@ -258,6 +251,8 @@ class Logger():
         plt.plot(indices, means, "o-", color="g",
                  label="{} per {} episode".format(name.lower(), interval))
         plt.legend(loc="best")
+        if save_path:
+            plt.savefig(save_path)
         plt.show()
 
     def write(self, index, name, value):
