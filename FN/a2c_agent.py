@@ -7,7 +7,8 @@ import keras as K
 from PIL import Image
 import gym
 import gym_ple
-from fn_framework import FNAgent, Trainer, Observer
+# from fn_framework import FNAgent, Trainer, Observer
+from fn_framework_original import FNAgent, Trainer, Observer
 tf.compat.v1.disable_eager_execution()
 
 
